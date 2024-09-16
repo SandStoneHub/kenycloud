@@ -1,4 +1,4 @@
-<img src="public/KenyCloudFull.png" width="400px">
+<img src="public/KenyCloudFull.png" width="600px">
 
 # KenyCloud
 
