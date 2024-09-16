@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors, { purple } from 'tailwindcss/colors';
 
 const config: Config = {
     darkMode: ["class"],
@@ -21,6 +22,29 @@ const config: Config = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+			white: {
+				DEFAULT: "#F8F0FF",
+				light: "#F8F0FF",
+				dark: "#BDB5C3",
+				darkest: "#97929B",
+				grey: "#716D74",
+				black: "171418"
+			},
+			purple: {
+				DEFAULT: "#A431FF",
+				light: "#D7A4FF",
+				lightest: "#C5B5D1",
+				darklight: "#9F90AB",
+				dark: "#655D6B",
+				darkest: "#342F38",
+
+			},
+			main: {
+				DEFAULT: "#FFFFFF",
+				whitedark: "#A3A3A3",
+				grey: "#3F3F3F",
+				greydark: "#2D2D2D",
+			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
