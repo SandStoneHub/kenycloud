@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 import {
@@ -14,17 +14,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { 
-  SignedOut, 
-  SignedIn, 
-  SignInButton, 
-  SignOutButton, 
   useOrganization, 
   useUser
 } from "@clerk/nextjs";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,7 +40,7 @@ const formSchema = z.object({
     .refine((files) => files.length > 0, "Required"),
 })
 
-export default function Home() {
+export function UploadButton() {
   const { toast } = useToast()
   const organization = useOrganization()
   const user = useUser()
@@ -106,17 +101,9 @@ export default function Home() {
 
   const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
 
-  const files = useQuery(
-    api.files.getFiles, 
-    orgId ? {orgId} : "skip"
-  )
   const createFile = useMutation(api.files.createFile)
 
   return (
-    <main className="container mx-auto pt-14"> {/*flex min-h-screen flex-col items-center justify-between p-24*/}
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold">Your Files</h1>
-        
         <Dialog open={isFileDialogOpen} onOpenChange={(isOpen) => {
           setIsFileDialogOpen(isOpen)
           form.reset()
@@ -170,12 +157,5 @@ export default function Home() {
                 </DialogHeader>
             </DialogContent>
         </Dialog>
-
-      </div>
-
-      {files?.map(file => {
-        return <div key={file._id}>{file.name}</div>
-      })}
-    </main>
   )
 }

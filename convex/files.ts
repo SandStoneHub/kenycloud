@@ -27,6 +27,7 @@ export const createFile = mutation({
         orgId: v.string()
     },
     async handler(ctx, args) {
+        // throw new Error("you have no access")
         const identify = await ctx.auth.getUserIdentity()
         
         console.log(identify)

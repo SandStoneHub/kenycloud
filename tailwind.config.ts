@@ -45,6 +45,9 @@ const config: Config = {
 				grey: "#3F3F3F",
 				greydark: "#2D2D2D",
 			},
+			success: {
+				DEFAULT: "#7FFFD4"
+			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
