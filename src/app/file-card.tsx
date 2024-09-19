@@ -24,13 +24,14 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-import { Doc } from "../../convex/_generated/dataModel"
+import { Doc, Id } from "../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
-import { MoreVertical, TrashIcon } from "lucide-react"
-import { useState } from "react"
+import { ImageIcon, MoreVertical, TrashIcon } from "lucide-react"
+import { ReactNode, useState } from "react"
 import { useMutation } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
+import Image from "next/image"
 
 function FileCardActions({ file }: { file: Doc<"files"> }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -74,21 +75,49 @@ function FileCardActions({ file }: { file: Doc<"files"> }){
     )
 }
 
+function getFileUrl(fileId: Id<"_storage">): string{
+    return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`
+}
+
 export function FileCard({file}: {file: Doc<"files">}){
+
+    const typeIcons = {
+        image: <ImageIcon/>,
+        pptx: <ImageIcon/>,
+        pdf: <ImageIcon/>,
+        zip: <ImageIcon/>,
+        csv: <ImageIcon/>,
+        txt: <ImageIcon/>,
+        audio: <ImageIcon/>,
+        video: <ImageIcon/>
+      } as Record<Doc<"files">["type"], ReactNode>
+
     return (
     <Card>
         <CardHeader className="relative">
-            <CardTitle className="break-words">{file.name}</CardTitle>
+            <CardTitle>
+                <div className="break-all flex gap-2">
+                    <div>{typeIcons[file.type]}</div>{" "}
+                    {file.name}
+                </div>
+            </CardTitle>
             <div className="absolute top-1 right-1 ">
                 <FileCardActions file={file}/>
             </div>
             {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
-        <CardContent>
-            <p>Card Content</p>
+        <CardContent className="break-words h-[200px] flex justify-center items-center">
+            {
+                file.type === "image" && <Image alt={file.name} width="200" height="100" src={getFileUrl(file.fileId)}/>
+            }
+            {
+                file.type !== "image" && <ImageIcon className="w-20 h-20"/>
+            }
         </CardContent>
         <CardFooter>
-            <Button>Download</Button>
+            <Button onClick={() => {
+                window.open(getFileUrl(file.fileId), "_blank")
+            }}>Download</Button>
         </CardFooter>
     </Card>
   )

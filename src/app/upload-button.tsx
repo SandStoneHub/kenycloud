@@ -32,6 +32,7 @@ import { useForm } from "react-hook-form"
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react";
+import { Doc } from "../../convex/_generated/dataModel";
 
 const formSchema = z.object({
   title: z.string().min(2).max(99),
@@ -60,18 +61,35 @@ export function UploadButton() {
     if(!orgId) return
 
     const postUrl = await generateUploadUrl()
+    const fileType = values.file[0].type
     const result = await fetch(postUrl, {
       method: "POST",
-      headers: { "Content-Type": values.file[0].type },
+      headers: { "Content-Type": fileType },
       body: values.file[0],
     })
     const { storageId } = await result.json()
 
+    console.log(fileType)
+    const types = {
+      "image/png": "image",
+      "image/svg+xml": "image",
+      "image/jpeg": "image",
+      "image/gif": "image",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+      "application/pdf": "pdf",
+      "application/x-zip-compressed": "zip",
+      "text/csv": "csv",
+      "text/plain": "txt",
+      "audio/mpeg": "audio",
+      "video/mp4": "video"
+    } as Record<string, Doc<"files">["type"]>
+    
     try{
       await createFile({
         name: values.title,
         fileId: storageId,
         orgId,
+        type: types[fileType]
       })
 
       form.reset()
