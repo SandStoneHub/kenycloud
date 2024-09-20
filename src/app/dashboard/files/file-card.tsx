@@ -24,12 +24,12 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-import { Doc, Id } from "../../convex/_generated/dataModel"
+import { Doc, Id } from "../../../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
 import { ImageIcon, MoreVertical, TrashIcon } from "lucide-react"
 import { ReactNode, useState } from "react"
 import { useMutation } from "convex/react"
-import { api } from "../../convex/_generated/api"
+import { api } from "../../../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
 import Image from "next/image"
 
@@ -76,7 +76,7 @@ function FileCardActions({ file }: { file: Doc<"files"> }){
 }
 
 function getFileUrl(fileId: Id<"_storage">): string{
-    return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`
+    return "https://combative-moose-852.convex.cloud/api/storage/63916f0c-65ff-4487-b3d2-b0ab70848f35"//`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`
 }
 
 export function FileCard({file}: {file: Doc<"files">}){
