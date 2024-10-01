@@ -10,6 +10,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -26,7 +27,7 @@ import {
 
 import { Doc, Id } from "../../../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
-import { ImageIcon, MoreVertical, TrashIcon } from "lucide-react"
+import { ImageIcon, MoreVertical, StarIcon, TrashIcon } from "lucide-react"
 import { ReactNode, useState } from "react"
 import { useMutation } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
@@ -36,6 +37,7 @@ import Image from "next/image"
 function FileCardActions({ file }: { file: Doc<"files"> }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const deleteFile = useMutation(api.files.deleteFile)
+    const toggleFavorite = useMutation(api.files.toggleFavorite)
     const { toast } = useToast()
     
     return (
@@ -66,15 +68,25 @@ function FileCardActions({ file }: { file: Doc<"files"> }){
             <DropdownMenu>
                 <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
                 <DropdownMenuContent>
+
+                    <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
+                        toggleFavorite({fileId: file._id})
+                    }}>
+                        <StarIcon className="w-4 h-4"/> Favorite
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+
                     <DropdownMenuItem className="flex gap-1 text-red-500 items-center cursor-pointer" onClick={() => setIsConfirmOpen(true)}>
                         <TrashIcon className="w-4 h-4"/> Delete
                     </DropdownMenuItem>
                 </DropdownMenuContent>
+
             </DropdownMenu>
         </>
     )
 }
-
+// get file url pzpzpzp
 function getFileUrl(fileId: Id<"_storage">): string{
     return "https://combative-moose-852.convex.cloud/api/storage/63916f0c-65ff-4487-b3d2-b0ab70848f35"//`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`
 }
