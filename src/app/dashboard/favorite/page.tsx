@@ -1,7 +1,9 @@
 import { FilesBrowser } from "../_components/file-browser";
 
 export default function FavoritePage(){
-    return <div>
-        <FilesBrowser title="Your Favorites"/>
-    </div>
+    return (
+        <div>
+            <FilesBrowser title="Your Favorites" favoritesOnly={true}/>
+        </div>
+    )
 }

@@ -3,6 +3,7 @@ import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server"
 import { getUser } from "./users"
 import { fileTypes } from "./schema";
 import { Id } from "./_generated/dataModel";
+import { access } from "fs";
 
 export const generateUploadUrl = mutation(async (ctx) => {
     const identify = await ctx.auth.getUserIdentity()
@@ -14,12 +15,24 @@ export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
 });
 
-async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, tokenIdentifier: string, orgId: string) {
-    const user = await getUser(ctx, tokenIdentifier)
+async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
+
+    const identify = await ctx.auth.getUserIdentity()
+        
+    console.log(identify)
+
+    if(!identify) return null
+
+    const user = await ctx.db.query("users").withIndex("by_tokenIdentifier", 
+        q => q.eq("tokenIdentifier", identify.tokenIdentifier)).first()
+
+    if(!user) return null
 
     const hasAccess = user.orgIds.includes(orgId) || user.tokenIdentifier.includes(orgId)
 
-    return hasAccess
+    if(!hasAccess) return null
+
+    return {user}
 }
 
 export const createFile = mutation({
@@ -30,16 +43,7 @@ export const createFile = mutation({
         type: fileTypes
     },
     async handler(ctx, args) {
-        // throw new Error("you have no access")
-        const identify = await ctx.auth.getUserIdentity()
-        
-        console.log(identify)
-
-        if(!identify) {
-            throw new ConvexError("Вы должны быть авторизованы, чтобы загрузить файл!")
-        }
-    
-        const hasAccess = await hasAccessToOrg(ctx, identify.tokenIdentifier, args.orgId)
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId)
 
         if (!hasAccess){
             throw new ConvexError("you do not have access to this org")
@@ -57,7 +61,8 @@ export const createFile = mutation({
 export const getFiles = query({
     args: {
         orgId: v.string(),
-        query: v.optional(v.string())
+        query: v.optional(v.string()),
+        favorites: v.optional(v.boolean())
     },
     async handler(ctx, args){
         const identify = await ctx.auth.getUserIdentity()
@@ -66,13 +71,13 @@ export const getFiles = query({
             return []
         }
 
-        const hasAccess = await hasAccessToOrg(ctx, identify.tokenIdentifier, args.orgId)
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId)
         
         if(!hasAccess) {
             return []
         }
 
-        const files = await ctx.db
+        let files = await ctx.db
             .query("files")
             .withIndex("by_orgId", q => 
                 q.eq("orgId", args.orgId)
@@ -81,11 +86,21 @@ export const getFiles = query({
         
         const query = args.query
 
-        if(!query){
-            return files
-        } else{
-            return files.filter(file => file.name.toLowerCase().includes(query.toLowerCase()    ))
+        if(query){
+            files = files.filter(file => file.name.toLowerCase().includes(query.toLowerCase()))
         }
+
+        if(args.favorites){
+
+            const favorites = await ctx.db.query("favorites")
+                .withIndex("by_userId_orgId_fileId", (q) => 
+                    q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId)
+                ).collect()
+
+            files = files.filter(file => favorites.some((favorite) => favorite.fileId === file._id))
+        }
+
+        return files
     }
 })
 
@@ -127,24 +142,29 @@ export const toggleFavorite = mutation({
     }
 })
 
+export const getAllFavorites = query({
+    args: { orgId: v.string() },
+    async handler(ctx, args){
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId)
+
+        if(!hasAccess) return []
+
+        const favorites = await ctx.db.query("favorites").withIndex("by_userId_orgId_fileId", 
+            q => q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId)).collect()
+
+        return favorites
+    }
+})
+
 async function hasAccessToFile(ctx: QueryCtx |  MutationCtx, fileId: Id<"files">){
-    const identify = await ctx.auth.getUserIdentity()
-
-    if(!identify) return null
-
     const file = await ctx.db.get(fileId)
 
     if(!file) return null
 
-    const hasAccess = await hasAccessToOrg(ctx, identify.tokenIdentifier, file.orgId)
+    const hasAccess = await hasAccessToOrg(ctx, file.orgId)
 
     if(!hasAccess) return null
 
-    const user = await ctx.db.query("users").withIndex("by_tokenIdentifier", 
-        q => q.eq("tokenIdentifier", identify.tokenIdentifier)).first()
-
-    if(!user) return null
-
-    return {user, file}
+    return {user: hasAccess.user, file}
 
 }
