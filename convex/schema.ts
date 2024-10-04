@@ -10,7 +10,10 @@ export const fileTypes = v.union(
   v.literal("pptx"),
   v.literal("video"),
   v.literal("audio"),
+  v.literal("other"),
 )
+
+export const roles = v.union(v.literal("admin"), v.literal("member"))
 
 export default defineSchema({
   files: defineTable({ 
@@ -31,6 +34,9 @@ export default defineSchema({
 
   users: defineTable({
     tokenIdentifier: v.string(),
-    orgIds: v.array(v.string())
+    orgIds: v.array(v.object({
+      orgId: v.string(),
+      role: roles
+    })),
   }).index("by_tokenIdentifier", ["tokenIdentifier"])
 });

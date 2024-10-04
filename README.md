@@ -19,3 +19,9 @@
 </p>
 
 **by Kenyka**
+
+# Thanks:
+
+- SandStone **|** with the support
+- Danayasi **|** icon designer
+- Leedanilek **|** bug helper

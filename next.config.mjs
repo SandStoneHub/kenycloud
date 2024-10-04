@@ -5,7 +5,7 @@ const nextConfig = {
     images: {
       remotePatterns: [
         {
-          hostname: "combative-moose-852.convex.cloud",
+          hostname: "combative-moose-852.convex.site",
         },
       ],
     },

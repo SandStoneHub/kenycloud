@@ -2,6 +2,7 @@ import { httpRouter } from "convex/server";
 
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 const http = httpRouter();
 
@@ -31,9 +32,17 @@ http.route({
         case "organizationMembership.created":
             await ctx.runMutation(internal.users.addOrgIdToUser, {
                 tokenIdentifier: `https://notable-anemone-34.clerk.accounts.dev|${result.data.public_user_data.user_id}`,
-                orgId: result.data.organization.id
+                orgId: result.data.organization.id,
+                role: result.data.role === "admin" ? "admin" : "member",
             });
             break;
+          case "organizationMembership.updated":
+              await ctx.runMutation(internal.users.updateRoleInOrgForUser, {
+                  tokenIdentifier: `https://notable-anemone-34.clerk.accounts.dev|${result.data.public_user_data.user_id}`,
+                  orgId: result.data.organization.id,
+                  role: result.data.role === "org:admin" ? "admin" : "member",
+              });
+              break;
       }
 
       return new Response(null, {
@@ -44,6 +53,22 @@ http.route({
         status: 400,
       });
     }
+  }),
+});
+
+http.route({
+  path: "/getImage",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    const { searchParams } = new URL(request.url);
+    const storageId = searchParams.get("storageId")! as Id<"_storage">;
+    const blob = await ctx.storage.get(storageId);
+    if (blob === null) {
+      return new Response("Image not found", {
+        status: 404,
+      });
+    }
+    return new Response(blob);
   }),
 });
 

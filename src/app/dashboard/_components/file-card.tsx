@@ -33,6 +33,7 @@ import { useMutation } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
 import Image from "next/image"
+import { Protect } from "@clerk/nextjs"
 
 function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -83,20 +84,24 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
                         )}
                     </DropdownMenuItem>
 
-                    <DropdownMenuSeparator />
-
-                    <DropdownMenuItem className="flex gap-1 text-red-500 items-center cursor-pointer" onClick={() => setIsConfirmOpen(true)}>
-                        <TrashIcon className="w-4 h-4"/> Delete
-                    </DropdownMenuItem>
+                    <Protect
+                        role="org:admin"
+                        fallback={<></>}
+                    >
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="flex gap-1 text-red-500 items-center cursor-pointer" onClick={() => setIsConfirmOpen(true)}>
+                            <TrashIcon className="w-4 h-4"/> Delete
+                        </DropdownMenuItem>
+                    </Protect>
                 </DropdownMenuContent>
 
             </DropdownMenu>
         </>
     )
 }
-// get file url pzpzpzp
+
 function getFileUrl(fileId: Id<"_storage">): string{
-    return "https://combative-moose-852.convex.cloud/api/storage/63916f0c-65ff-4487-b3d2-b0ab70848f35"//`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`
+    return `${process.env.NEXT_PUBLIC_CONVEX_ACTION_URL}/getImage?storageId=${fileId}`
 }
 
 export function FileCard({file, favorites}: {file: Doc<"files">, favorites: Doc<"favorites">[]}){
@@ -109,7 +114,7 @@ export function FileCard({file, favorites}: {file: Doc<"files">, favorites: Doc<
         csv: <ImageIcon/>,
         txt: <ImageIcon/>,
         audio: <ImageIcon/>,
-        video: <ImageIcon/>
+        video: <ImageIcon/>,
     } as Record<Doc<"files">["type"], ReactNode>
 
     const isFavorites = favorites.some((favorite) => favorite.fileId === file._id)
