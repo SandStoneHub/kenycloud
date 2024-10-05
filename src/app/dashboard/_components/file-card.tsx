@@ -27,7 +27,7 @@ import {
 
 import { Doc, Id } from "../../../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
-import { ImageIcon, MoreVertical, StarHalf, StarIcon, TrashIcon } from "lucide-react"
+import { ImageIcon, MoreVertical, StarHalf, StarIcon, TrashIcon, UndoIcon } from "lucide-react"
 import { ReactNode, useState } from "react"
 import { useMutation } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
@@ -38,6 +38,7 @@ import { Protect } from "@clerk/nextjs"
 function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const deleteFile = useMutation(api.files.deleteFile)
+    const restoreFile = useMutation(api.files.restoreFile)
     const toggleFavorite = useMutation(api.files.toggleFavorite)
     const { toast } = useToast()
     
@@ -48,8 +49,7 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
+                            This action will move your file to the trash, from where you can restore it
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -58,8 +58,8 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
                             await deleteFile({fileId: file._id})
                             toast({
                                 variant: "default",
-                                title: "File deleted",
-                                description: "Success delete"
+                                title: "File move to trash",
+                                description: "Your file has been moved to the trash"
                             })
                         }}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
@@ -89,8 +89,23 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
                         fallback={<></>}
                     >
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="flex gap-1 text-red-500 items-center cursor-pointer" onClick={() => setIsConfirmOpen(true)}>
-                            <TrashIcon className="w-4 h-4"/> Delete
+                        <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
+                            if (file.shouldDelete){
+                                restoreFile({
+                                    fileId: file._id
+                                })
+                            } else {
+                                setIsConfirmOpen(true)
+                            }
+                            
+                        }}>
+                            {file.shouldDelete ? <div className="flex gap-1 text-green-500 items-center cursor-pointer">
+                                <UndoIcon className="w-4 h-4"/> Restore
+                            </div> :
+                            <div className="flex gap-1 text-red-500 items-center cursor-pointer">
+                                <TrashIcon className="w-4 h-4"/> Delete
+                            </div>
+                            }
                         </DropdownMenuItem>
                     </Protect>
                 </DropdownMenuContent>

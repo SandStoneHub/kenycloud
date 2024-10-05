@@ -7,6 +7,7 @@ import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
 import EmptyImg from "./empty.svg"
+import TrashImg from "./trash.webp"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
@@ -28,7 +29,24 @@ function Placeholder(){
   )
 }
 
-export function FilesBrowser({title, favoritesOnly}: {title: string, favoritesOnly?: boolean}) {
+function PlaceholderTrash(){
+  return (
+    <div className="flex flex-col gap-3 w-full items-center mt-16 mb-5">
+      <Image
+        alt=""
+        width="400"
+        height="400"
+        src={TrashImg}
+      />
+      <div className="font-bold text-2xl text-center">
+        You have no files
+        <p className="text-base text-gray-500">*all files will be deleted after 7 days</p>
+      </div>
+    </div>
+  )
+}
+
+export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string, favoritesOnly?: boolean, deletedOnly?: boolean}) {
   const organization = useOrganization()
   const user = useUser()
   const [query, setQuery] = useState("")
@@ -44,7 +62,7 @@ export function FilesBrowser({title, favoritesOnly}: {title: string, favoritesOn
 
   const files = useQuery(
     api.files.getFiles, 
-    orgId ? {orgId, query, favorites: favoritesOnly} : "skip"
+    orgId ? {orgId, query, favorites: favoritesOnly, deletedOnly} : "skip"
   )
   const isLoading = files === undefined
 
@@ -65,8 +83,12 @@ export function FilesBrowser({title, favoritesOnly}: {title: string, favoritesOn
                 <UploadButton/>
               </div>
 
-              {files.length === 0 &&(
+              {files.length === 0 && !deletedOnly &&(
                 <Placeholder />
+              )}
+
+              {files.length === 0 && deletedOnly &&(
+                <PlaceholderTrash />
               )}
 
               <div className="grid grid-cols-3 gap-4">
