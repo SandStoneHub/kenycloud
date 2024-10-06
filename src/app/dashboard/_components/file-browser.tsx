@@ -11,6 +11,8 @@ import TrashImg from "./trash.webp"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
+import { DataTable } from "./file-table";
+import { columns } from "./columns";
 
 function Placeholder(){
   return (
@@ -65,6 +67,12 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
     orgId ? {orgId, query, favorites: favoritesOnly, deletedOnly} : "skip"
   )
   const isLoading = files === undefined
+  const modifiedFiles = files?.map(file => ({
+    ...file,
+    isFavorited: (favorites ?? []).some(
+      (favorite) => favorite.fileId === file._id
+    )
+  })) ?? []
 
   return (
         <div>
@@ -91,9 +99,11 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                 <PlaceholderTrash />
               )}
 
+              <DataTable columns={columns} data={modifiedFiles} />
+
               <div className="grid grid-cols-3 gap-4">
-                {files?.map(file => {
-                  return <FileCard favorites={favorites ?? []} key={file._id} file={file}/>
+                {modifiedFiles?.map(file => {
+                  return <FileCard key={file._id} file={file}/>
                 })}
               </div>
             </>
