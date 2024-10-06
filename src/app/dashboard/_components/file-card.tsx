@@ -26,14 +26,15 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { Doc, Id } from "../../../../convex/_generated/dataModel"
-import { Button } from "@/components/ui/button"
-import { ImageIcon, MoreVertical, StarHalf, StarIcon, TrashIcon, UndoIcon } from "lucide-react"
+import { FileIcon, ImageIcon, MoreVertical, StarHalf, StarIcon, TrashIcon, UndoIcon } from "lucide-react"
 import { ReactNode, useState } from "react"
-import { useMutation } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
 import Image from "next/image"
 import { Protect } from "@clerk/nextjs"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { format, formatDistance, formatRelative, subDays } from 'date-fns'
 
 function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -69,6 +70,12 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
             <DropdownMenu>
                 <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
                 <DropdownMenuContent>
+                    
+                    <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
+                        window.open(getFileUrl(file.fileId), "_blank")
+                    }}>
+                        <FileIcon className="w-4 h-4"/> Download
+                    </DropdownMenuItem>
 
                     <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
                         toggleFavorite({fileId: file._id})
@@ -83,7 +90,7 @@ function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorite
                             </div>
                         )}
                     </DropdownMenuItem>
-
+                    
                     <Protect
                         role="org:admin"
                         fallback={<></>}
@@ -121,6 +128,10 @@ function getFileUrl(fileId: Id<"_storage">): string{
 
 export function FileCard({file, favorites}: {file: Doc<"files">, favorites: Doc<"favorites">[]}){
 
+    const userProfile = useQuery(api.users.getUserProfile, {
+        userId: file.userId
+    })
+
     const typeIcons = {
         image: <ImageIcon/>,
         pptx: <ImageIcon/>,
@@ -137,7 +148,7 @@ export function FileCard({file, favorites}: {file: Doc<"files">, favorites: Doc<
     return (
     <Card>
         <CardHeader className="relative">
-            <CardTitle>
+            <CardTitle className="text-base font-normal">
                 <div className="break-all flex gap-2">
                     <div>{typeIcons[file.type]}</div>{" "}
                     {file.name}
@@ -156,10 +167,18 @@ export function FileCard({file, favorites}: {file: Doc<"files">, favorites: Doc<
                 file.type !== "image" && <ImageIcon className="w-20 h-20"/>
             }
         </CardContent>
-        <CardFooter>
-            <Button onClick={() => {
-                window.open(getFileUrl(file.fileId), "_blank")
-            }}>Download</Button>
+        <CardFooter className="flex justify-between">
+            <div className="flex gap-2 text-gray-500 items-center">
+                <Avatar className="w-8 h-8">
+                    <AvatarImage src={userProfile?.image} />
+                    <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                {userProfile?.name}
+            </div>
+
+            <div className="text-xs text-gray-700">
+                Uploaded on {formatRelative(new Date(file._creationTime), new Date())}
+            </div>
         </CardFooter>
     </Card>
   )
