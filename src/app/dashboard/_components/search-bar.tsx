@@ -48,7 +48,7 @@ export function SearchBar({query, setQuery}: {query: string, setQuery: Dispatch<
                     </FormItem>
                 )}
                 />
-                <Button type="submit" disabled={form.formState.isSubmitting} className="flex gap-1">
+                <Button type="submit" disabled={form.formState.isSubmitting} className="search-btn flex gap-1">
                     {form.formState.isSubmitting && (<Loader2 className="mr-2 h-4 w-4 animate-spin"/>)}
                     <SearchIcon/> <p>Search</p>
                 </Button>

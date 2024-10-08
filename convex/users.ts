@@ -87,3 +87,20 @@ export const getUserProfile = query({
         }
     }
 })
+
+export const getMe = query({
+    args: {},
+    async handler(ctx, args){
+        const identify = await ctx.auth.getUserIdentity()
+
+        if(!identify) {
+            throw new ConvexError("Вы должны быть авторизованы, чтобы загрузить файл!")
+        }
+
+        const user = await getUser(ctx, identify.tokenIdentifier)
+
+        if(!user) return null
+
+        return user
+    }
+})
