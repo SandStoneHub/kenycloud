@@ -71,17 +71,32 @@ export function UploadButton() {
 
     console.log(fileType)
     const types = {
-      "image/png": "image",
-      "image/svg+xml": "image",
-      "image/jpeg": "image",
-      "image/gif": "image",
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
-      "application/pdf": "pdf",
-      "application/x-zip-compressed": "zip",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "txt",
+      "application/rtf": "txt",
       "text/csv": "csv",
       "text/plain": "txt",
+      "image/bmp": "image-other",
+      "image/gif": "image-other",
+      "image/svg+xml": "image-other",
+      "image/jpeg": "image",
+      "image/png": "image",
       "audio/mpeg": "audio",
-      "video/mp4": "video"
+      "audio/ogg": "audio",
+      "audio/wav": "audio",
+      "video/avi": "video",
+      "video/flac": "video",
+      "video/mp4": "video",
+      "video/quicktime": "video",
+      "video/x-matroska": "video",
+      "application/vnd.sqlite3": "db",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+      "application/x-zip-compressed": "zip",
+      "application/json": "programming",
+      "text/css": "programming",
+      "text/html": "programming",
+      "text/javascript": "programming",
+      "text/x-python": "programming",
+      "application/x-msdownload": "exe",
     } as Record<string, Doc<"files">["type"]>
     
     try{

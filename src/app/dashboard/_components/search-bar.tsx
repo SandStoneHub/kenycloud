@@ -31,7 +31,6 @@ export function SearchBar({query, setQuery}: {query: string, setQuery: Dispatch<
         setQuery(values.query)
     }
 
-
     return (
     <div>
         <Form {...form}>
@@ -42,15 +41,15 @@ export function SearchBar({query, setQuery}: {query: string, setQuery: Dispatch<
                 render={({ field }) => (
                     <FormItem>
                         <FormControl>
-                            <Input placeholder="Your file names"{...field} />
+                            <Input placeholder="File names"{...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}
                 />
-                <Button type="submit" disabled={form.formState.isSubmitting} className="search-btn flex gap-1">
+                <Button type="submit" disabled={form.formState.isSubmitting} className="search-btn flex gap-1 mr-3">
                     {form.formState.isSubmitting && (<Loader2 className="mr-2 h-4 w-4 animate-spin"/>)}
-                    <SearchIcon/> <p>Search</p>
+                    <SearchIcon/>
                 </Button>
             </form>
         </Form>

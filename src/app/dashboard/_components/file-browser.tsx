@@ -6,8 +6,8 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
-import EmptyImg from "./empty.svg"
-import TrashImg from "./trash.webp"
+import EmptyImg from "../../../../public/empty.svg"
+import TrashImg from "../../../../public/trash.webp"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
@@ -52,7 +52,9 @@ function PlaceholderTrash(){
       />
       <div className="font-bold text-2xl text-center">
         You have no files
-        <p className="text-base text-gray-500">*all files will be deleted after 7 days</p>
+        <p className="text-base text-gray-500">
+          *all files will be deleted after 7 days
+        </p>
       </div>
     </div>
   )
@@ -87,21 +89,21 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
 
   return (
         <div>
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-4xl font-bold">{title}</h1>
-                <SearchBar query={query} setQuery={setQuery}/>
+              <div className="flex justify-between items-start sm:items-center mb-8 flex-col sm:flex-row">
+                <h1 className="text-4xl font-bold mr-2">{title}</h1>
+                <div className="py-4 sm:py-0"><SearchBar query={query} setQuery={setQuery}/></div>
                 <UploadButton/>
               </div>
 
               <Tabs defaultValue="grid">
                 <div className="flex justify-between items-center">
-                  <TabsList className="mb-2">
+                  {/* <TabsList className="mb-2">
                     <TabsTrigger value="grid" className="flex gap-2 items-center">Grid</TabsTrigger>
                     <TabsTrigger value="table" className="flex gap-2 items-center">Table</TabsTrigger>
-                  </TabsList>
+                  </TabsList> */}
 
                   <div className="flex gap-2 items-center">
-                    <Label htmlFor="typeSelect">Type Filters</Label>    
+                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Type Filters</p></Label>    
                     <Select value={type} onValueChange={(newType) => {
                       setType(newType as any)
                     }}>
@@ -129,7 +131,7 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                 }
 
                 <TabsContent value="grid">
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mr-2">
                       {modifiedFiles?.map(file => {
                         return <FileCard key={file._id} file={file}/>
                       })}

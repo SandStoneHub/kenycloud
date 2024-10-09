@@ -15,7 +15,7 @@ export function SideNav(){
             <Button variant={"link"} className={clsx("flex gap-2", {
               "text-blue-400": pathname.includes("/dashboard/files")
             })}>
-              <FileIcon/>Files
+              <FileIcon/><p className="hidden sm:block">Files</p>
             </Button>
           </Link>
 
@@ -23,7 +23,7 @@ export function SideNav(){
             <Button variant={"link"} className={clsx("flex gap-2", {
               "text-blue-400": pathname.includes("/dashboard/favorite")
             })}>
-              <StarIcon/>Favorite
+              <StarIcon/><p className="hidden sm:block">Favorite</p>
             </Button>
           </Link>
 
@@ -31,7 +31,7 @@ export function SideNav(){
             <Button variant={"link"} className={clsx("flex gap-2", {
               "text-blue-400": pathname.includes("/dashboard/trash")
             })}>
-              <TrashIcon/>Trash
+              <TrashIcon/><p className="hidden sm:block">Trash</p>
             </Button>
           </Link>
         </div>
