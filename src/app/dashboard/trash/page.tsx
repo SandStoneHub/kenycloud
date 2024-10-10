@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function FavoritePage(){
     return (
         <div>
-            <FilesBrowser title="Trash" deletedOnly={true}/>
+            <FilesBrowser title="Корзина" deletedOnly={true}/>
         </div>
     )
 }

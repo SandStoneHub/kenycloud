@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function FavoritePage(){
     return (
         <div>
-            <FilesBrowser title="Your Favorites" favoritesOnly={true}/>
+            <FilesBrowser title="Избранные" favoritesOnly={true}/>
         </div>
     )
 }

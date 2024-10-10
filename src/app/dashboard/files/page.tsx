@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function FilesPage(){
     return (
         <div>
-            <FilesBrowser title="Your Files"/>
+            <FilesBrowser title="Файлы"/>
         </div>
     )
 }

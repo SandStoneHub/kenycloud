@@ -6,8 +6,8 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
-import EmptyImg from "../../../../public/empty.svg"
-import TrashImg from "../../../../public/trash.webp"
+import EmptyImg from "../../../../public/image/empty.svg"
+import TrashImg from "../../../../public/image/trash.webp"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
@@ -26,15 +26,15 @@ import { Label } from "@/components/ui/label";
 
 function Placeholder(){
   return (
-    <div className="flex flex-col gap-8 w-full items-center mt-12">
+    <div className="flex flex-col gap-8 w-full items-center my-4">
       <Image
         alt=""
         width="400"
         height="400"
         src={EmptyImg}
       />
-      <div className="font-bold text-2xl ">
-        You have no files
+      <div className="font-bold text-2xl text-center">
+        Пока что тут нету файлов, но скоро они появятся (наверно)
       </div>
       <UploadButton/>
     </div>
@@ -51,9 +51,9 @@ function PlaceholderTrash(){
         src={TrashImg}
       />
       <div className="font-bold text-2xl text-center">
-        You have no files
+        Пока что тут нету файлов, но скоро они появятся (наверно)
         <p className="text-base text-gray-500">
-          *all files will be deleted after 7 days
+          *Все файлы из корзины удалятся спутся 7 дней после их перемещения
         </p>
       </div>
     </div>
@@ -103,7 +103,7 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                   </TabsList> */}
 
                   <div className="flex gap-2 items-center">
-                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Type Filters</p></Label>    
+                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Показать:</p></Label>    
                     <Select value={type} onValueChange={(newType) => {
                       setType(newType as any)
                     }}>
@@ -111,13 +111,13 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All</SelectItem>
-                        <SelectItem value="image">Image</SelectItem>
-                        <SelectItem value="audio">Audio</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="csv">CSV</SelectItem>
-                        <SelectItem value="pdf">PDF</SelectItem>
-                        <SelectItem value="zip">Zip</SelectItem>
+                        <SelectItem value="all">Все</SelectItem>
+                        <SelectItem value="image">Изображения</SelectItem>
+                        <SelectItem value="audio">Аудио</SelectItem>
+                        <SelectItem value="video">Видео</SelectItem>
+                        <SelectItem value="csv">CSV Таблицы</SelectItem>
+                        <SelectItem value="pdf">PDF Файлы</SelectItem>
+                        <SelectItem value="zip">Zip Архивы</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -126,7 +126,7 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                 {isLoading && 
                   <div className="flex flex-col gap-8 w-full items-center mt-12">
                     <Loader2 className="h-32 w-32 animate-spin text-white-grey"/>
-                    <div className="text-2xl text-white-grey text-center">Loading...</div>
+                    <div className="text-2xl text-white-grey text-center">Загрузка...</div>
                   </div>
                 }
 

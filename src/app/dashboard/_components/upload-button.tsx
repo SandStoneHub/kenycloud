@@ -112,16 +112,16 @@ export function UploadButton() {
   
       toast({
         variant: "success",
-        title: "File upload!",
-        description: "Success upload"
+        title: "Успешно!",
+        description: "Ваш файл успешно загружен"
       })
 
     } catch (error){
 
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: "Your file could not be uploaded, try again later"
+        title: "Попробуйте позже",
+        description: "Ваш файл не может быть загружен, попробуйте позже"
       })
 
     }
@@ -145,12 +145,12 @@ export function UploadButton() {
             <Button onClick={() => {
               
               }}>
-                Upload File
+                Загрузить файл
             </Button>
             </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle className="mb-4">Upload your File</DialogTitle>
+                  <DialogTitle className="mb-4">Загрузить ваш файл</DialogTitle>
                   <DialogDescription>
                       <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -159,9 +159,9 @@ export function UploadButton() {
                             name="title"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Title</FormLabel>
+                                <FormLabel>Загаловок</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Your title" {...field} />
+                                  <Input placeholder="Название файла" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -172,7 +172,7 @@ export function UploadButton() {
                             name="file"
                             render={() => (
                               <FormItem>
-                                <FormLabel>File</FormLabel>
+                                <FormLabel>Файл</FormLabel>
                                 <FormControl>
                                   <Input type="file" {...fileRef}/>
                                 </FormControl>
@@ -182,7 +182,7 @@ export function UploadButton() {
                           />
                           <Button type="submit" disabled={form.formState.isSubmitting} className="flex gap-2">
                             {form.formState.isSubmitting && (<Loader2 className="mr-2 h-4 w-4 animate-spin"/>)}
-                            Submit
+                            Загрузить
                           </Button>
                         </form>
                       </Form>

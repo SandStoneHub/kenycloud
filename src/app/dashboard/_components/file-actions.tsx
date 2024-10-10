@@ -37,21 +37,21 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
             <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>Вы абсолютно уверены?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action will move your file to the trash, from where you can restore it
+                            Это действие переместит ваш файл в корзину, а при повторном действии, удалит его навсегда без возможности восстановления
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
                         <AlertDialogAction onClick={async () => {
                             await deleteFile({fileId: file._id})
                             toast({
                                 variant: "default",
-                                title: "File move to trash",
-                                description: "Your file has been moved to the trash"
+                                title: "Файл удален",
+                                description: "Ваш файл был перемещен в корзину, перейдите чтобы его восстановить"
                             })
-                        }}>Continue</AlertDialogAction>
+                        }}>Удалить</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -63,7 +63,7 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                     <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
                         window.open(getFileUrl(file.fileId), "_blank")
                     }}>
-                        <FileIcon className="w-4 h-4"/> Download
+                        <FileIcon className="w-4 h-4"/> Скачать
                     </DropdownMenuItem>
 
                     <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
@@ -71,11 +71,11 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                     }}>
                         {isFavorited ? (
                             <div className="flex gap-1 items-center">
-                                <StarHalf className="w-4 h-4"/> Unfavorite
+                                <StarHalf className="w-4 h-4"/> Удалить из Избранных
                             </div>
                         ):(
                             <div className="flex gap-1 items-center">
-                                <StarIcon className="w-4 h-4"/> Favorite
+                                <StarIcon className="w-4 h-4"/> Добавить в Избранные
                             </div>
                         )}
                     </DropdownMenuItem>
@@ -100,10 +100,10 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                             
                         }}>
                             {file.shouldDelete ? <div className="flex gap-1 text-green-500 items-center cursor-pointer">
-                                <UndoIcon className="w-4 h-4"/> Restore
+                                <UndoIcon className="w-4 h-4"/> Восстановить
                             </div> :
                             <div className="flex gap-1 text-red-500 items-center cursor-pointer">
-                                <TrashIcon className="w-4 h-4"/> Delete
+                                <TrashIcon className="w-4 h-4"/> Удалить
                             </div>
                             }
                         </DropdownMenuItem>

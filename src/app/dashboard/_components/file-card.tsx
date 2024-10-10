@@ -64,7 +64,7 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
             </div>
 
             <div className="text-xs text-gray-700 mx-3">
-                Uploaded on {formatRelative(new Date(file._creationTime), new Date())}
+                Загружено {formatRelative(new Date(file._creationTime), new Date())}
             </div>
         </CardFooter>
     </Card>
