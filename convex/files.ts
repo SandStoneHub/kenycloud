@@ -19,7 +19,7 @@ async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
 
     const identify = await ctx.auth.getUserIdentity()
         
-    console.log(identify)
+    // console.log(identify)
 
     if(!identify) return null
 

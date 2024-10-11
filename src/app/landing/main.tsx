@@ -16,6 +16,9 @@ export default function Main(){
                 <a href="/dashboard/files">
                     <Button className="mt-2">Перейти</Button>
                 </a>
+                <a href="https://github.com/sandstonehub/kenycloud" className="ml-2" target="_blank">
+                    GitHub {"->"}
+                </a>
             </div>
         </section>
     )
