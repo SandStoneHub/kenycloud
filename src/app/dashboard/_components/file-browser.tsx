@@ -7,13 +7,13 @@ import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
 import EmptyImg from "../../../../public/image/empty.svg"
-import TrashImg from "../../../../public/image/trash.webp"
+import TrashImg from "../../../../public/image/trash.png"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
 import { DataTable } from "./file-table";
 import { columns } from "./columns";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
   Select,
   SelectContent,

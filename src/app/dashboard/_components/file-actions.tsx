@@ -82,7 +82,7 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                             </div>
                         )}
                     </DropdownMenuItem>
-                    
+
                     <Protect
                         condition={(check) => {
                             return check({
