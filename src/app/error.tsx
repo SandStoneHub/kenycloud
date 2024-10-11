@@ -26,7 +26,7 @@ const Error500: React.FC<ErrorPageProps> = ({ error, reset }) => {
           </h1>
 
           <h3 className="text-2xl break-word max-w-[500px] text-gray-600 px-4 md:px-0">
-            Упсс...
+            Internal server error
           </h3>
 
           <Link href="/" className="text-gray-500 hover:text-gray-600">

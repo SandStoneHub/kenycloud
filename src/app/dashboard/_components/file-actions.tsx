@@ -23,6 +23,9 @@ import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
 import { Protect } from "@clerk/nextjs"
+import Image from "next/image"
+import starImg from "../../../../public/icon/Star.svg"
+import unstarImg from "../../../../public/icon/UnStar.svg"
 
 export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -71,11 +74,11 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                     }}>
                         {isFavorited ? (
                             <div className="flex gap-1 items-center">
-                                <StarHalf className="w-4 h-4"/> Удалить из Избранных
+                                <Image src={starImg} className="w-4 h-4" alt="избранные"/> Удалить из Избранных
                             </div>
                         ):(
                             <div className="flex gap-1 items-center">
-                                <StarIcon className="w-4 h-4"/> Добавить в Избранные
+                                <Image src={unstarImg} className="w-4 h-4" alt="избранные"/> Добавить в Избранные
                             </div>
                         )}
                     </DropdownMenuItem>

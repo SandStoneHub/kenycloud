@@ -6,7 +6,18 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Doc } from "../../../../convex/_generated/dataModel"
-import { ImageIcon } from "lucide-react"
+import { 
+    AppWindow,
+    ArchiveIcon, 
+    AudioLinesIcon, 
+    Code2Icon, 
+    DatabaseIcon, 
+    FileIcon, 
+    ImageIcon, 
+    ListIcon, 
+    PresentationIcon, 
+    VideoIcon 
+} from "lucide-react"
 import { ReactNode } from "react"
 import { useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
@@ -23,13 +34,18 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
 
     const typeIcons = {
         image: <ImageIcon/>,
-        pptx: <ImageIcon/>,
-        pdf: <ImageIcon/>,
-        zip: <ImageIcon/>,
-        csv: <ImageIcon/>,
-        txt: <ImageIcon/>,
-        audio: <ImageIcon/>,
-        video: <ImageIcon/>,
+        imageother: <ImageIcon/>,
+        pptx: <PresentationIcon/>,
+        pdf: <PresentationIcon/>,
+        zip: <ArchiveIcon/>,
+        csv: <ListIcon/>,
+        txt: <FileIcon/>,
+        audio: <AudioLinesIcon/>,
+        video: <VideoIcon/>,
+        exe: <AppWindow/>,
+        db: <DatabaseIcon/>,
+        programming: <Code2Icon/>,
+        other: <ImageIcon/>,
     } as Record<Doc<"files">["type"], ReactNode>
 
     return (
@@ -51,7 +67,34 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
                 file.type === "image" && <Image alt={file.name} width="200" height="100" src={getFileUrl(file.fileId)}/>
             }
             {
-                file.type !== "image" && <ImageIcon className="w-20 h-20"/>
+                file.type === "imageother" && <ImageIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "pptx" || file.type === "pdf" && <PresentationIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "zip" && <ArchiveIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "csv" && <ListIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "txt" && <FileIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "audio" && <AudioLinesIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "video" && <VideoIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "exe" && <AppWindow className="w-20 h-20"/>
+            }
+            {
+                file.type === "db" && <DatabaseIcon className="w-20 h-20"/>
+            }
+            {
+                file.type === "programming" && <Code2Icon className="w-20 h-20"/>
             }
         </CardContent>
         <CardFooter className="flex justify-between">
