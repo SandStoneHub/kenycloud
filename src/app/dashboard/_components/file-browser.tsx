@@ -7,7 +7,7 @@ import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
 import EmptyImg from "../../../../public/image/empty.svg"
-import TrashImg from "../../../../public/image/trash.png"
+import TrashImg from "../../../../public/image/Trash.png"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
