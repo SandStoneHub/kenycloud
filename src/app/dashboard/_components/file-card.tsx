@@ -64,13 +64,13 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
         </CardHeader>
         <CardContent className="break-words h-[200px] flex justify-center items-center">
             {
-                file.type === "image" && <Image alt={file.name} width="200" height="100" src={getFileUrl(file.fileId)}/>
+                file.type === "image" && <Image alt={file.name} width="100" height="150" className="max-w-[130px] max-h-[180px]" src={getFileUrl(file.fileId)}/>
             }
             {
                 file.type === "imageother" && <ImageIcon className="w-20 h-20"/>
             }
             {
-                file.type === "pptx" || file.type === "pdf" && <PresentationIcon className="w-20 h-20"/>
+                file.type === "pptx" && <PresentationIcon className="w-20 h-20"/> || file.type === "pdf" && <PresentationIcon className="w-20 h-20"/>
             }
             {
                 file.type === "zip" && <ArchiveIcon className="w-20 h-20"/>

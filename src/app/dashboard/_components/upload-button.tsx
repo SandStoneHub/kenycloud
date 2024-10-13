@@ -35,7 +35,7 @@ import { Loader2 } from "lucide-react";
 import { Doc } from "../../../../convex/_generated/dataModel";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(99),
+  title: z.string().min(2).max(69),
   file: z
     .custom<FileList>((val) => val instanceof FileList, "Required")
     .refine((files) => files.length > 0, "Required"),
@@ -91,12 +91,13 @@ export function UploadButton() {
       "application/vnd.sqlite3": "db",
       "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
       "application/x-zip-compressed": "zip",
-      "application/json": "programming",
-      "text/css": "programming",
-      "text/html": "programming",
-      "text/javascript": "programming",
-      "text/x-python": "programming",
-      "application/x-msdownload": "exe",
+      // "application/json": "programming",
+      // "text/css": "programming",
+      // "text/html": "programming",
+      // "text/javascript": "programming",
+      // "text/x-python": "programming",
+      // "application/x-msdownload": "exe",
+      "application/pdf": "pdf",
     } as Record<string, Doc<"files">["type"]>
     
     try{

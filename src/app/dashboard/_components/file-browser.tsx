@@ -65,6 +65,7 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
   const user = useUser()
   const [query, setQuery] = useState("")
   const [type, setType] = useState<Doc<"files">["type"] | "all">("all")
+  const [sort, setSort] = useState<string>("default")
 
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded){
@@ -79,13 +80,20 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
     api.files.getFiles, 
     orgId ? {orgId, type: type === "all" ? undefined : type, query, favorites: favoritesOnly, deletedOnly} : "skip"
   )
+
   const isLoading = files === undefined
+
   const modifiedFiles = files?.map(file => ({
     ...file,
     isFavorited: (favorites ?? []).some(
       (favorite) => favorite.fileId === file._id
     )
   })) ?? []
+  modifiedFiles.reverse()
+
+  const modifiedFilesAlphabet = [...modifiedFiles].sort((a, b) => 
+    a.name.localeCompare(b.name)
+  ) ?? [];
 
   return (
         <div>
@@ -96,14 +104,14 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
               </div>
 
               <Tabs defaultValue="grid">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between flex-col">
                   {/* <TabsList className="mb-2">
                     <TabsTrigger value="grid" className="flex gap-2 items-center">Grid</TabsTrigger>
                     <TabsTrigger value="table" className="flex gap-2 items-center">Table</TabsTrigger>
                   </TabsList> */}
 
-                  <div className="flex gap-2 items-center">
-                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Показать:</p></Label>    
+                  <div className="flex gap-0 md:gap-2 items-center">
+                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Показать:</p></Label>
                     <Select value={type} onValueChange={(newType) => {
                       setType(newType as any)
                     }}>
@@ -121,6 +129,22 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  <div className="flex gap-0 md:gap-2 items-center mt-3">
+                    <Label htmlFor="sortSelect"><p className="hidden sm:block">Сортировать:</p></Label>
+                    <Select value={sort} onValueChange={(newSort) => {
+                      setSort(newSort as string)
+                    }}>
+                      <SelectTrigger className="w-[180px]" id="sort-select">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">По новизне</SelectItem>
+                        <SelectItem value="descending">По убыванию</SelectItem>
+                        <SelectItem value="alphabet">По алфавиту</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 {isLoading && 
@@ -132,7 +156,13 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
 
                 <TabsContent value="grid">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mr-2">
-                      {modifiedFiles?.map(file => {
+                      {sort === "default" && modifiedFiles?.map(file => {
+                        return <FileCard key={file._id} file={file}/>
+                      })}
+                      {sort === "descending" && modifiedFiles.reverse()?.map(file => {
+                        return <FileCard key={file._id} file={file}/>
+                      })}
+                      {sort === "alphabet" && modifiedFilesAlphabet?.map(file => {
                         return <FileCard key={file._id} file={file}/>
                       })}
                     </div>
