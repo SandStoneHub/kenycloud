@@ -7,6 +7,7 @@ import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
 import EmptyImg from "../../../../public/image/empty.svg"
+import RandEmptyImg from "../../../../public/image/empty.png"
 import TrashImg from "../../../../public/image/Trash.png"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
@@ -25,13 +26,14 @@ import { Doc } from "../../../../convex/_generated/dataModel";
 import { Label } from "@/components/ui/label";
 
 function Placeholder(){
+  const number: number = Math.floor(Math.random() * 24) + 1;
   return (
     <div className="flex flex-col gap-8 w-full items-center my-4">
       <Image
         alt=""
         width="400"
         height="400"
-        src={EmptyImg}
+        src={number === 24 ? RandEmptyImg : EmptyImg}
       />
       <div className="font-bold text-2xl text-center">
         Пока что тут нету файлов, но скоро они появятся (наверно)
@@ -95,6 +97,18 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
     a.name.localeCompare(b.name)
   ) ?? [];
 
+  const getSortedFiles = () => {
+    if (sort === "descending") {
+      return [...modifiedFiles].reverse()
+    } else if (sort === "alphabet") {
+      return modifiedFilesAlphabet
+    } else if (sort == "default"){
+      return modifiedFiles
+    }
+  };
+  
+  const sortedFiles = getSortedFiles()
+
   return (
         <div>
               <div className="flex justify-between items-start sm:items-center mb-8 flex-col sm:flex-row">
@@ -156,15 +170,15 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
 
                 <TabsContent value="grid">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mr-2">
-                      {sort === "default" && modifiedFiles?.map(file => {
-                        return <FileCard key={file._id} file={file}/>
-                      })}
-                      {sort === "descending" && modifiedFiles.reverse()?.map(file => {
+                      {sortedFiles?.map(file => (
+                        <FileCard key={file._id} file={file} />
+                      ))}
+                      {/* {sort === "descending" && modifiedFiles.reverse()?.map(file => {
                         return <FileCard key={file._id} file={file}/>
                       })}
                       {sort === "alphabet" && modifiedFilesAlphabet?.map(file => {
                         return <FileCard key={file._id} file={file}/>
-                      })}
+                      })} */}
                     </div>
                 </TabsContent>
 

@@ -15,9 +15,6 @@ export default function FilesPage(){
     return (
         <div>
             <FilesBrowser title="Файлы"/>
-            <SignedOut>
-              <SignIn />
-            </SignedOut>
         </div>
     )
 }
