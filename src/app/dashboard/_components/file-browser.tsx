@@ -6,8 +6,8 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { UploadButton } from "./upload-button";
 import { FileCard } from "./file-card";
 import Image from "next/image";
-import EmptyImg from "../../../../public/image/empty.svg"
-import RandEmptyImg from "../../../../public/image/empty.png"
+import EmptyImg from "../../../../public/image/empty.png"
+import VentilEmptyImg from "../../../../public/image/emptyVentil.png"
 import TrashImg from "../../../../public/image/Trash.png"
 import { Loader2 } from "lucide-react";
 import { SearchBar } from "./search-bar";
@@ -26,14 +26,14 @@ import { Doc } from "../../../../convex/_generated/dataModel";
 import { Label } from "@/components/ui/label";
 
 function Placeholder(){
-  const number: number = Math.floor(Math.random() * 24) + 1;
+  const numbers: number = Math.floor(Math.random() * 36) + 1;
   return (
     <div className="flex flex-col gap-8 w-full items-center my-4">
       <Image
         alt=""
         width="400"
         height="400"
-        src={number === 24 ? RandEmptyImg : EmptyImg}
+        src={numbers === 24 ? VentilEmptyImg : EmptyImg}
       />
       <div className="font-bold text-2xl text-center">
         Пока что тут нету файлов, но скоро они появятся (наверно)
@@ -91,11 +91,21 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
       (favorite) => favorite.fileId === file._id
     )
   })) ?? []
+
   modifiedFiles.reverse()
 
   const modifiedFilesAlphabet = [...modifiedFiles].sort((a, b) => 
     a.name.localeCompare(b.name)
-  ) ?? [];
+  ) ?? []
+
+  type FileType = "image" | "imageother" | "table" | "zip" | "txt" | "presentation" | "pptx" | "video" | "audio" | "programming" | "exe" | "db"
+  const sortOrder: FileType[] = [
+    "image", "imageother", "table", "zip", "txt", "presentation", "pptx", 
+    "video", "audio", "programming", "exe", "db"
+  ];
+  const modifiedFilesType = modifiedFiles.sort((a, b) => {
+    return sortOrder.indexOf(a.type) - sortOrder.indexOf(b.type);
+  });
 
   const getSortedFiles = () => {
     if (sort === "descending") {
@@ -104,6 +114,12 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
       return modifiedFilesAlphabet
     } else if (sort == "default"){
       return modifiedFiles
+    } else if (sort == "alphabetreverse"){
+      return modifiedFilesAlphabet.reverse()
+    } else if (sort == "types"){
+      return modifiedFilesType
+    } else if (sort == "typesreverse"){
+      return modifiedFilesType.reverse()
     }
   };
   
@@ -137,8 +153,8 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                         <SelectItem value="image">Изображения</SelectItem>
                         <SelectItem value="audio">Аудио</SelectItem>
                         <SelectItem value="video">Видео</SelectItem>
-                        <SelectItem value="csv">CSV Таблицы</SelectItem>
-                        <SelectItem value="pdf">PDF Файлы</SelectItem>
+                        <SelectItem value="table">Таблицы</SelectItem>
+                        <SelectItem value="presentation">Презентации</SelectItem>
                         <SelectItem value="zip">Zip Архивы</SelectItem>
                       </SelectContent>
                     </Select>
@@ -155,7 +171,10 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                       <SelectContent>
                         <SelectItem value="default">По новизне</SelectItem>
                         <SelectItem value="descending">По убыванию</SelectItem>
-                        <SelectItem value="alphabet">По алфавиту</SelectItem>
+                        <SelectItem value="alphabet">По алфавиту (А-Я)</SelectItem>
+                        <SelectItem value="alphabetreverse">По алфавиту (Я-А)</SelectItem>
+                        <SelectItem value="types">По типу файла</SelectItem>
+                        <SelectItem value="typesreverse">По типу файла (убывание)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -173,12 +192,6 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                       {sortedFiles?.map(file => (
                         <FileCard key={file._id} file={file} />
                       ))}
-                      {/* {sort === "descending" && modifiedFiles.reverse()?.map(file => {
-                        return <FileCard key={file._id} file={file}/>
-                      })}
-                      {sort === "alphabet" && modifiedFilesAlphabet?.map(file => {
-                        return <FileCard key={file._id} file={file}/>
-                      })} */}
                     </div>
                 </TabsContent>
 

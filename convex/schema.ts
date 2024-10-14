@@ -4,17 +4,16 @@ import { v } from "convex/values";
 export const fileTypes = v.union(
   v.literal("image"), 
   v.literal("imageother"),
-  v.literal("csv"), 
-  v.literal("pdf"), 
+  v.literal("table"),
   v.literal("zip"),
   v.literal("txt"),
+  v.literal("presentation"),
   v.literal("pptx"),
   v.literal("video"),
   v.literal("audio"),
   v.literal("programming"),
   v.literal("exe"),
   v.literal("db"),
-  v.literal("other")
 )
 
 export const roles = v.union(v.literal("admin"), v.literal("member"))

@@ -15,26 +15,97 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Doc, Id } from "../../../../convex/_generated/dataModel"
-import { FileIcon, MoreVertical, StarHalf, StarIcon, TrashIcon, UndoIcon } from "lucide-react"
+import { EditIcon, FileIcon, Loader2, MoreVertical, StarHalf, StarIcon, TrashIcon, UndoIcon } from "lucide-react"
 import { useState } from "react"
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { useToast } from "@/hooks/use-toast"
-import { Protect } from "@clerk/nextjs"
+import { Protect, useOrganization, useUser } from "@clerk/nextjs"
 import Image from "next/image"
 import starImg from "../../../../public/icon/Star.svg"
 import unstarImg from "../../../../public/icon/UnStar.svg"
+import { Button } from "@/components/ui/button"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "@/components/ui/input"
+import { renameFile } from "../../../../convex/files"
+
+const formSchema = z.object({
+    title: z.string().min(2).max(69)
+})
 
 export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+    const [isRenameOpen, setIsRenameOpen] = useState(false)
     const deleteFile = useMutation(api.files.deleteFile)
+    const renameFile = useMutation(api.files.renameFile)
     const restoreFile = useMutation(api.files.restoreFile)
     const toggleFavorite = useMutation(api.files.toggleFavorite)
     const me = useQuery(api.users.getMe)
+    const organization = useOrganization()
+    const user = useUser()
     const { toast } = useToast()
     
+    
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          title: ""
+        }
+    })
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        if(!orgId) return
+                
+        try{
+          await renameFile({
+            name: values.title,
+            fileId: file._id,
+          })
+    
+          form.reset()
+          setIsRenameOpen(false)
+      
+          toast({
+            variant: "success",
+            title: "Успешно!",
+            description: "Ваш файл успешно переименнован"
+          })
+    
+        } catch (error){
+    
+          toast({
+            variant: "destructive",
+            title: "Попробуйте позже",
+            description: "Ваш файл не может быть переименнован, попробуйте позже"
+          })
+    
+        }
+      }
+
+    let orgId: string | undefined = undefined;
+    if (organization.isLoaded && user.isLoaded){
+        orgId = organization.organization?.id ?? user.user?.id
+    }
+
     return (
         <>
             <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
@@ -59,6 +130,41 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                 </AlertDialogContent>
             </AlertDialog>
 
+            <Dialog open={isRenameOpen} onOpenChange={(isOpen) => {
+                    setIsRenameOpen(isOpen)
+                    form.reset()
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle className="mb-4">Переименовать ваш файл</DialogTitle>
+                    <DialogDescription>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Название</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder="Название файла" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <Button type="submit" disabled={form.formState.isSubmitting} className="flex gap-2">
+                                {form.formState.isSubmitting && (<Loader2 className="mr-2 h-4 w-4 animate-spin"/>)}
+                                Переименовать
+                            </Button>
+                            </form>
+                        </Form>
+                    </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
             <DropdownMenu>
                 <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -82,6 +188,23 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                             </div>
                         )}
                     </DropdownMenuItem>
+
+                    <Protect
+                        condition={(check) => {
+                            return check({
+                                role: "org:admin"
+                            }) || file.userId === me?._id
+                        }}
+                        fallback={<></>}
+                    >
+                        <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
+                            setIsRenameOpen(true)
+                        }}>
+                            <div className="flex gap-1 items-center cursor-pointer">
+                                <EditIcon className="w-4 h-4"/> Переименовать
+                            </div>
+                        </DropdownMenuItem>
+                    </Protect>
 
                     <Protect
                         condition={(check) => {

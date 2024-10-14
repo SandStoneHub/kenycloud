@@ -35,17 +35,16 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
     const typeIcons = {
         image: <ImageIcon/>,
         imageother: <ImageIcon/>,
+        presentation: <PresentationIcon/>,
         pptx: <PresentationIcon/>,
-        pdf: <PresentationIcon/>,
         zip: <ArchiveIcon/>,
-        csv: <ListIcon/>,
+        table: <ListIcon/>,
         txt: <FileIcon/>,
         audio: <AudioLinesIcon/>,
         video: <VideoIcon/>,
         exe: <AppWindow/>,
         db: <DatabaseIcon/>,
-        programming: <Code2Icon/>,
-        other: <ImageIcon/>,
+        programming: <Code2Icon/>
     } as Record<Doc<"files">["type"], ReactNode>
 
     return (
@@ -70,13 +69,13 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
                 file.type === "imageother" && <ImageIcon className="w-20 h-20"/>
             }
             {
-                file.type === "pptx" && <PresentationIcon className="w-20 h-20"/> || file.type === "pdf" && <PresentationIcon className="w-20 h-20"/>
+                file.type === "presentation" && <PresentationIcon className="w-20 h-20"/>
             }
             {
                 file.type === "zip" && <ArchiveIcon className="w-20 h-20"/>
             }
             {
-                file.type === "csv" && <ListIcon className="w-20 h-20"/>
+                file.type === "table" && <ListIcon className="w-20 h-20"/>
             }
             {
                 file.type === "txt" && <FileIcon className="w-20 h-20"/>

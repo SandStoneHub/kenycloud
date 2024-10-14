@@ -26,4 +26,4 @@
 
 - SandStone **|** with the support
 - Danayasi **|** icon designer
-- Leedanilek **|** bug helper
+- to everyone who helped correct errors and answered my problems in the Convex, Clerk and Next js discord communities (**jeremy_clerk**, **Leedanilek**, **gin**, **Riskymh**)

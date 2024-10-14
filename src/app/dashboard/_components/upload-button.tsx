@@ -73,7 +73,9 @@ export function UploadButton() {
     const types = {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "txt",
       "application/rtf": "txt",
-      "text/csv": "csv",
+      "text/csv": "table",
+      "application/vnd.ms-excel": "table",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "table",
       "text/plain": "txt",
       "image/bmp": "imageother",
       "image/gif": "imageother",
@@ -89,15 +91,9 @@ export function UploadButton() {
       "video/quicktime": "video",
       "video/x-matroska": "video",
       "application/vnd.sqlite3": "db",
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation": "presentation",
       "application/x-zip-compressed": "zip",
-      // "application/json": "programming",
-      // "text/css": "programming",
-      // "text/html": "programming",
-      // "text/javascript": "programming",
-      // "text/x-python": "programming",
-      // "application/x-msdownload": "exe",
-      "application/pdf": "pdf",
+      "application/pdf": "presentation",
     } as Record<string, Doc<"files">["type"]>
     
     try{

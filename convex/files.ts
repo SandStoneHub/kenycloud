@@ -59,6 +59,25 @@ export const createFile = mutation({
     }
 })
 
+export const renameFile = mutation({
+    args: { 
+        fileId: v.id("files"),
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+        const access = await hasAccessToFile(ctx, args.fileId)
+
+        if(!access){
+            throw new ConvexError("no access to file")
+        }
+
+        await ctx.db.patch(args.fileId, {
+            name: args.name
+        })
+        
+    }
+})
+
 export const getFiles = query({
     args: {
         orgId: v.string(),
