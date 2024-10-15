@@ -92,7 +92,6 @@ export function UploadButton() {
       "video/x-matroska": "video",
       "application/vnd.sqlite3": "db",
       "application/vnd.openxmlformats-officedocument.presentationml.presentation": "presentation",
-      "application/x-zip-compressed": "zip",
       "application/pdf": "presentation",
     } as Record<string, Doc<"files">["type"]>
     

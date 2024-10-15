@@ -67,7 +67,8 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
   const user = useUser()
   const [query, setQuery] = useState("")
   const [type, setType] = useState<Doc<"files">["type"] | "all">("all")
-  const [sort, setSort] = useState<string>("default")
+  const [sort, setSort] = useState<string>("date")
+  const [typeSort, setTypeSort] = useState<string>("new")
 
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded){
@@ -92,34 +93,44 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
     )
   })) ?? []
 
+  const dateFiles = (files ?? [])
+    .map(file => ({
+      ...file,
+      isFavorited: (favorites ?? []).some(favorite => favorite.fileId === file._id)
+    }))
+    .sort((a, b) => new Date(b._creationTime).valueOf() - new Date(a._creationTime).valueOf());
+
   modifiedFiles.reverse()
 
   const modifiedFilesAlphabet = [...modifiedFiles].sort((a, b) => 
     a.name.localeCompare(b.name)
   ) ?? []
 
-  type FileType = "image" | "imageother" | "table" | "zip" | "txt" | "presentation" | "pptx" | "video" | "audio" | "programming" | "exe" | "db"
+  type FileType = "image" | "imageother" | "table" | "txt" | "presentation" | "pptx" | "video" | "audio" | "programming" | "exe" | "db"
   const sortOrder: FileType[] = [
-    "image", "imageother", "table", "zip", "txt", "presentation", "pptx", 
+    "image", "imageother", "table", "txt", "presentation", "pptx", 
     "video", "audio", "programming", "exe", "db"
   ];
-  const modifiedFilesType = modifiedFiles.sort((a, b) => {
+  const modifiedFilesDate = modifiedFiles.sort((a, b) => {
     return sortOrder.indexOf(a.type) - sortOrder.indexOf(b.type);
   });
 
   const getSortedFiles = () => {
-    if (sort === "descending") {
-      return [...modifiedFiles].reverse()
-    } else if (sort === "alphabet") {
+    if (sort === "alphabet") {
+      if (typeSort == "reverse"){
+        return modifiedFilesAlphabet.reverse()
+      }
       return modifiedFilesAlphabet
-    } else if (sort == "default"){
-      return modifiedFiles
-    } else if (sort == "alphabetreverse"){
-      return modifiedFilesAlphabet.reverse()
     } else if (sort == "types"){
-      return modifiedFilesType
-    } else if (sort == "typesreverse"){
-      return modifiedFilesType.reverse()
+      if (typeSort == "reverse"){
+        return [...modifiedFiles].reverse()
+      }
+      return modifiedFiles
+    } else if (sort == "date"){
+      if (typeSort == "reverse"){
+        return [...dateFiles].reverse()
+      }
+      return dateFiles
     }
   };
   
@@ -155,13 +166,12 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                         <SelectItem value="video">Видео</SelectItem>
                         <SelectItem value="table">Таблицы</SelectItem>
                         <SelectItem value="presentation">Презентации</SelectItem>
-                        <SelectItem value="zip">Zip Архивы</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  <div className="flex gap-0 md:gap-2 items-center mt-3">
-                    <Label htmlFor="sortSelect"><p className="hidden sm:block">Сортировать:</p></Label>
+                  <div className="flex gap-0 md:gap-2 items-start md:items-center mt-3 flex-col md:flex-row">
+                    <Label htmlFor="sortSelect"><p className="hidden sm:block">Сортировать по:</p></Label>
                     <Select value={sort} onValueChange={(newSort) => {
                       setSort(newSort as string)
                     }}>
@@ -169,16 +179,28 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="default">По новизне</SelectItem>
-                        <SelectItem value="descending">По убыванию</SelectItem>
-                        <SelectItem value="alphabet">По алфавиту (А-Я)</SelectItem>
-                        <SelectItem value="alphabetreverse">По алфавиту (Я-А)</SelectItem>
-                        <SelectItem value="types">По типу файла</SelectItem>
-                        <SelectItem value="typesreverse">По типу файла (убывание)</SelectItem>
+                        <SelectItem value="date">Дате</SelectItem>
+                        <SelectItem value="alphabet">Алфавиту</SelectItem>
+                        <SelectItem value="types">Типу файла</SelectItem>
                       </SelectContent>
                     </Select>
+                    
+                    <div className="mt-3 md:mt-0">
+                      <Select value={typeSort} onValueChange={(newSort) => {
+                        setTypeSort(newSort as string)
+                      }}>
+                        <SelectTrigger className="w-[180px]" id="sort-select">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">Новизне</SelectItem>
+                          <SelectItem value="reverse">Убыванию</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
+                
                 
                 {isLoading && 
                   <div className="flex flex-col gap-8 w-full items-center mt-12">

@@ -1,8 +1,14 @@
+"use client"
+
 import Image from "next/image";
 import img from "../../../public/image/Landing.png"
 import { Button } from "@/components/ui/button";
+import { SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 
 export default function Main(){
+
+    const { isSignedIn } = useUser()
+
     return (
         <section className="flex justify-center md:flex-row flex-col items-center mt-12">
             <Image src={img} width="700" alt="" className="m-2 md:mr-2 animate-fade-right animate-duration-1000 animate-delay-[100ms] animate-ease-in-out"/>
@@ -13,9 +19,17 @@ export default function Main(){
                     </div>
                 </h1>
                 <h3 className="text-2xl break-word max-w-[500px] text-gray-600 px-4 md:px-0">Open source Файловое хранилище</h3>
-                <a href="/dashboard/files">
-                    <Button className="mt-2">Перейти</Button>
-                </a>
+                {isSignedIn ? (
+                    <a href="/dashboard/files">
+                        <Button className="mt-2">Перейти</Button>
+                    </a>
+                ) : (
+                    <SignedOut>
+                        <SignInButton>
+                            <Button className="mt-2">Войти</Button>
+                        </SignInButton>
+                    </SignedOut>
+                )}
                 <a href="https://github.com/sandstonehub/kenycloud" className="ml-2" target="_blank">
                     GitHub {"->"}
                 </a>

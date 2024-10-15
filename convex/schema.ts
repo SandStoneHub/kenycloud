@@ -5,7 +5,6 @@ export const fileTypes = v.union(
   v.literal("image"), 
   v.literal("imageother"),
   v.literal("table"),
-  v.literal("zip"),
   v.literal("txt"),
   v.literal("presentation"),
   v.literal("pptx"),

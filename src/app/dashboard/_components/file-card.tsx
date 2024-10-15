@@ -36,8 +36,6 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
         image: <ImageIcon/>,
         imageother: <ImageIcon/>,
         presentation: <PresentationIcon/>,
-        pptx: <PresentationIcon/>,
-        zip: <ArchiveIcon/>,
         table: <ListIcon/>,
         txt: <FileIcon/>,
         audio: <AudioLinesIcon/>,
@@ -70,9 +68,6 @@ export function FileCard({file}: {file: Doc<"files"> & {isFavorited: boolean}}){
             }
             {
                 file.type === "presentation" && <PresentationIcon className="w-20 h-20"/>
-            }
-            {
-                file.type === "zip" && <ArchiveIcon className="w-20 h-20"/>
             }
             {
                 file.type === "table" && <ListIcon className="w-20 h-20"/>

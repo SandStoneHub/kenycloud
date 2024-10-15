@@ -176,6 +176,22 @@ export const deleteFile = mutation({
     }
 })
 
+export const absoluteDeleteFile = mutation({
+    args: { fileId: v.id("files") },
+    async handler(ctx, args){
+        const access = await hasAccessToFile(ctx, args.fileId)
+
+        if(!access){
+            throw new ConvexError("no access to file")
+        }
+
+        assertCanDeleteFile(access.user, access.file)
+
+        await ctx.storage.delete(access.file.fileId)
+        await ctx.db.delete(access.file._id)
+    }
+})
+
 export const restoreFile = mutation({
     args: { fileId: v.id("files") },
     async handler(ctx, args){

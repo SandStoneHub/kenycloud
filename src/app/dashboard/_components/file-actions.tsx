@@ -46,7 +46,6 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
-import { renameFile } from "../../../../convex/files"
 
 const formSchema = z.object({
     title: z.string().min(2).max(69)
@@ -54,10 +53,12 @@ const formSchema = z.object({
 
 export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isFavorited:boolean }){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+    const [isAbsoluteConfirmOpen, setIsAbsoluteConfirmOpen] = useState(false)
     const [isRenameOpen, setIsRenameOpen] = useState(false)
     const deleteFile = useMutation(api.files.deleteFile)
     const renameFile = useMutation(api.files.renameFile)
     const restoreFile = useMutation(api.files.restoreFile)
+    const absoluteDeleteFile = useMutation(api.files.absoluteDeleteFile)
     const toggleFavorite = useMutation(api.files.toggleFavorite)
     const me = useQuery(api.users.getMe)
     const organization = useOrganization()
@@ -130,6 +131,28 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                 </AlertDialogContent>
             </AlertDialog>
 
+            <AlertDialog open={isAbsoluteConfirmOpen} onOpenChange={setIsAbsoluteConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Вы абсолютно уверены?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Это действие полностью удалит ваш файл без возможность восстановления
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                        <AlertDialogAction onClick={async () => {
+                            await absoluteDeleteFile({fileId: file._id})
+                            toast({
+                                variant: "default",
+                                title: "Файл удален",
+                                description: "Ваш файл успешно удален"
+                            })
+                        }}>Удалить</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <Dialog open={isRenameOpen} onOpenChange={(isOpen) => {
                     setIsRenameOpen(isOpen)
                     form.reset()
@@ -166,7 +189,9 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
             </Dialog>
 
             <DropdownMenu>
-                <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
+                <DropdownMenuTrigger>
+                    <MoreVertical />
+                </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     
                     <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
@@ -225,17 +250,38 @@ export function FileCardActions({ file, isFavorited }: { file: Doc<"files">, isF
                             }
                             
                         }}>
-                            {file.shouldDelete ? <div className="flex gap-1 text-green-500 items-center cursor-pointer">
-                                <UndoIcon className="w-4 h-4"/> Восстановить
-                            </div> :
-                            <div className="flex gap-1 text-red-500 items-center cursor-pointer">
+                            {file.shouldDelete ? (
+                                <div className="flex gap-1 text-green-500 items-center cursor-pointer">
+                                    <UndoIcon className="w-4 h-4"/> Восстановить
+                                </div>
+                            ) :
+                            (<div className="flex gap-1 text-red-500 items-center cursor-pointer">
                                 <TrashIcon className="w-4 h-4"/> Удалить
-                            </div>
+                            </div>)
                             }
                         </DropdownMenuItem>
                     </Protect>
+                    
+                    {file.shouldDelete && (
+                        <Protect
+                            condition={(check) => {
+                                return check({
+                                    role: "org:admin"
+                                }) || file.userId === me?._id
+                            }}
+                            fallback={<></>}
+                        >
+                            <DropdownMenuItem className="flex gap-1 items-center cursor-pointer" onClick={() => {
+                                setIsAbsoluteConfirmOpen(true)
+                            }}>
+                                
+                                <div className="flex gap-1 text-red-500 items-center cursor-pointer">
+                                    <TrashIcon className="w-4 h-4"/> Удалить
+                                </div>
+                            </DropdownMenuItem>
+                        </Protect>
+                    )}
                 </DropdownMenuContent>
-
             </DropdownMenu>
         </>
     )
