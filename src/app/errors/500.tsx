@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import img from "../../../public/error/500.png"
-import Link from 'next/link';
 
 export default function Page500(){
     return (
@@ -15,10 +14,6 @@ export default function Page500(){
                 <h3 className="text-2xl break-word max-w-[500px] text-gray-600 px-4 md:px-0">
                     Internal server error
                 </h3>
-
-                <Link href="/" className="text-gray-500 hover:text-gray-600">
-                    На главную
-                </Link>
             </div>
         </section>
     )

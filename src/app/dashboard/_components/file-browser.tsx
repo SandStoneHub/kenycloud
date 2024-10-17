@@ -151,8 +151,8 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                     <TabsTrigger value="table" className="flex gap-2 items-center">Table</TabsTrigger>
                   </TabsList> */}
 
-                  <div className="flex gap-0 md:gap-2 items-center">
-                    <Label htmlFor="typeSelect"><p className="hidden sm:block">Показать:</p></Label>
+                  <div className="flex gap-0 md:gap-2 items-start md:items-center flex-col md:flex-row">
+                    <Label htmlFor="typeSelect"><p className="my-2 md:mx-0">Показать:</p></Label>
                     <Select value={type} onValueChange={(newType) => {
                       setType(newType as any)
                     }}>
@@ -171,7 +171,7 @@ export function FilesBrowser({title, favoritesOnly, deletedOnly}: {title: string
                   </div>
                   
                   <div className="flex gap-0 md:gap-2 items-start md:items-center mt-3 flex-col md:flex-row">
-                    <Label htmlFor="sortSelect"><p className="hidden sm:block">Сортировать по:</p></Label>
+                    <Label htmlFor="sortSelect"><p className="my-2 md:mx-0">Сортировать по:</p></Label>
                     <Select value={sort} onValueChange={(newSort) => {
                       setSort(newSort as string)
                     }}>
